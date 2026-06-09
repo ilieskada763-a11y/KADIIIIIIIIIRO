@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Anime {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  bannerUrl   String
+  coverUrl    String
+  rating      Float
+  year        Int
+  episodes    Episode[]
+  genres      Genre[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Episode {
+  id          String   @id @default(cuid())
+  title       String
+  number      Int
+  videoUrl    String
+  duration    String
+  animeId     String
+  anime       Anime    @relation(fields: [animeId], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Genre {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  animes Anime[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      String   @default("USER")
+  createdAt DateTime @default(now())
+}
