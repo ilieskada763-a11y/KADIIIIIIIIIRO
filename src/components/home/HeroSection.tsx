@@ -1,11 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Play, Info, Star, Calendar } from "lucide-react";
 import Image from "next/image";
+import { gsap } from "gsap";
 
 export const HeroSection = () => {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (titleRef.current) {
+      gsap.fromTo(
+        titleRef.current,
+        { skewX: -20, opacity: 0 },
+        { skewX: 0, opacity: 1, duration: 1.5, ease: "power4.out" }
+      );
+    }
+  }, []);
+
   return (
     <section className="relative h-[90vh] w-full flex items-center px-6 md:px-20 overflow-hidden">
       <div className="absolute inset-0 -z-20">
@@ -36,7 +49,10 @@ export const HeroSection = () => {
             </div>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-black mb-4 leading-none tracking-tighter uppercase">
+          <h1
+            ref={titleRef}
+            className="text-6xl md:text-8xl font-black mb-4 leading-none tracking-tighter uppercase"
+          >
             Cyberpunk <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-anime-red to-electric-blue">
               Edgerunners

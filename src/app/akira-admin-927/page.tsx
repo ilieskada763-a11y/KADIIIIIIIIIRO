@@ -8,12 +8,40 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const [error, setError] = useState("");
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaCode, setMfaCode] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "akira2025") {
-      // Set a mock session cookie
-      document.cookie = "admin_session=true; path=/";
+    setError("");
+
+    try {
+      const res = await fetch("/api/auth/admin-login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "admin@akaistream.com",
+          password,
+          mfaCode: mfaRequired ? mfaCode : undefined
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Authentication failed");
+        return;
+      }
+
+      if (data.mfaRequired) {
+        setMfaRequired(true);
+        return;
+      }
+
       router.push("/akira-admin-927/dashboard");
+    } catch {
+      setError("An error occurred during login");
     }
   };
 
@@ -28,21 +56,41 @@ export default function AdminLogin() {
         <p className="text-white/40 text-sm font-bold uppercase tracking-widest mb-10">Admin Terminal • Level 4 Clearance</p>
 
         <form onSubmit={handleLogin} className="space-y-6">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-5 flex items-center text-white/20">
-              <Lock size={18} />
+          {error && <p className="text-anime-red text-xs font-bold uppercase mb-4">{error}</p>}
+
+          {!mfaRequired ? (
+            <div className="relative">
+              <div className="absolute inset-y-0 left-5 flex items-center text-white/20">
+                <Lock size={18} />
+              </div>
+              <input
+                type="password"
+                placeholder="Enter Access Key"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm outline-none focus:border-anime-red transition-all"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
-            <input
-              type="password"
-              placeholder="Enter Access Key"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm outline-none focus:border-anime-red transition-all"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+          ) : (
+            <div className="relative">
+              <div className="absolute inset-y-0 left-5 flex items-center text-white/20">
+                <Shield size={18} />
+              </div>
+              <input
+                type="text"
+                placeholder="Enter MFA Code"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 text-sm outline-none focus:border-anime-red transition-all"
+                value={mfaCode}
+                onChange={(e) => setMfaCode(e.target.value)}
+                required
+              />
+              <p className="text-[10px] text-white/40 mt-2 uppercase font-bold tracking-widest">Code: 123456 (Dev Mode)</p>
+            </div>
+          )}
 
           <button className="w-full bg-anime-red py-4 rounded-2xl font-black flex items-center justify-center gap-3 neon-glow-red hover:scale-105 transition-all group">
-            AUTHORIZE
+            {mfaRequired ? "VERIFY CODE" : "AUTHORIZE"}
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </form>

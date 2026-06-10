@@ -39,9 +39,48 @@ model Genre {
 }
 
 model User {
+  id             String    @id @default(cuid())
+  email          String    @unique
+  password       String
+  role           String    @default("USER")
+  mfaSecret      String?
+  mfaEnabled     Boolean   @default(false)
+  failedAttempts Int       @default(0)
+  lockedUntil    DateTime?
+  lastLogin      DateTime?
+  sessions       Session[]
+  auditLogs      AuditLog[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  refreshToken String   @unique
+  expiresAt    DateTime
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+}
+
+model AuditLog {
   id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  role      String   @default("USER")
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  resource  String
+  ipAddress String
+  details   String?
   createdAt DateTime @default(now())
+}
+
+model RateLimit {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  points    Int      @default(0)
+  resetAt   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
