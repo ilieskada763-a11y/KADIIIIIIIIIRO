@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --anime-red: #FF1A1A;
+  --pistachio: #93C572;
+  --electric-blue: #00AEEF;
+}
+
+body {
+  background-color: #050505;
+}

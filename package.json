@@ -1,43 +1,13 @@
 {
   "name": "akai-stream",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint",
-    "postinstall": "prisma generate"
-  },
-  "dependencies": {
-    "@prisma/client": "^6.3.1",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/redis": "^4.0.10",
-    "@types/three": "^0.173.0",
-    "bcryptjs": "^3.0.3",
-    "clsx": "^2.1.1",
-    "framer-motion": "^12.4.2",
-    "gsap": "^3.12.7",
-    "jose": "^6.2.3",
-    "lucide-react": "1.17.0",
-    "next": "16.2.9",
-    "prisma": "^6.3.1",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "redis": "^6.0.0",
-    "tailwind-merge": "^3.0.1",
-    "three": "^0.173.0",
-    "zod": "^4.4.3",
-    "zod-form-data": "^3.0.2"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4.0.7",
-    "@types/node": "^20.17.19",
-    "@types/react": "19.0.8",
-    "@types/react-dom": "19.0.3",
-    "eslint": "^9.20.1",
-    "eslint-config-next": "16.2.9",
-    "tailwindcss": "^4.0.7",
-    "typescript": "5.9.2"
+    "backend:dev": "npm run start:dev --workspace=backend",
+    "frontend:dev": "npm run dev --workspace=frontend"
   }
 }

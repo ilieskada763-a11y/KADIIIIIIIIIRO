@@ -1,0 +1,302 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- IAM & Security ---
+
+model User {
+  id              String    @id @default(uuid())
+  username        String    @unique
+  email           String    @unique
+  passwordHash    String
+  avatar          String?
+  role            UserRole  @default(USER)
+  status          UserStatus @default(ACTIVE)
+
+  // Security
+  mfaEnabled      Boolean   @default(false)
+  mfaSecret       String?
+  failedAttempts  Int       @default(0)
+  lockedUntil     DateTime?
+
+  // Relations
+  sessions        UserSession[]
+  watchHistory    WatchHistory[]
+  watchlist       Watchlist[]
+  favorites       Favorite[]
+  comments        Comment[]
+  ratings         Rating[]
+  notifications   Notification[]
+  auditLogs       AuditLog[]
+  adminLogs       AdminLog[] @relation("AdminActions")
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+}
+
+enum UserRole {
+  OWNER
+  USER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+model UserSession {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  refreshToken String   @unique
+  deviceInfo   String?
+  ipAddress    String?
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
+// --- Content ---
+
+model Anime {
+  id            String    @id @default(uuid())
+  title         String
+  titleJapanese String?
+  slug          String    @unique
+  description   String
+  coverImage    String
+  bannerImage   String
+  releaseDate   DateTime?
+  status        AnimeStatus @default(ONGOING)
+  rating        String?
+
+  seasons       Season[]
+  genres        Genre[]
+  studios       Studio[]
+  tags          Tag[]
+  views         AnimeView[]
+  likes         AnimeLike[]
+  comments      Comment[]
+  ratings       Rating[]
+  watchlist     Watchlist[]
+  favorites     Favorite[]
+
+  year          Int?
+  seasonName    String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+}
+
+enum AnimeStatus {
+  FINISHED
+  ONGOING
+  UPCOMING
+  HIATUS
+}
+
+model Season {
+  id           String    @id @default(uuid())
+  number       Int
+  title        String?
+  animeId      String
+  anime        Anime     @relation(fields: [animeId], references: [id])
+  episodes     Episode[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Episode {
+  id            String    @id @default(uuid())
+  seasonId      String
+  season        Season    @relation(fields: [seasonId], references: [id])
+  number        Int
+  title         String
+  description   String?
+  duration      Int?      // in seconds
+  videoUrl      String
+  thumbnail     String?
+  releaseDate   DateTime?
+
+  comments      Comment[]
+  watchHistory  WatchHistory[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Genre {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  animes    Anime[]
+  createdAt DateTime @default(now())
+}
+
+model Studio {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  animes    Anime[]
+  createdAt DateTime @default(now())
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  animes    Anime[]
+  createdAt DateTime @default(now())
+}
+
+// --- Interaction ---
+
+model WatchHistory {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  episodeId String
+  episode   Episode  @relation(fields: [episodeId], references: [id])
+  progress  Int      // in seconds
+  watchedAt DateTime @default(now())
+
+  @@index([userId, watchedAt])
+}
+
+model Watchlist {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  animeId   String
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  addedAt   DateTime @default(now())
+
+  @@id([userId, animeId])
+}
+
+model Favorite {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  animeId   String
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([userId, animeId])
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  animeId   String?
+  anime     Anime?   @relation(fields: [animeId], references: [id])
+  episodeId String?
+  episode   Episode? @relation(fields: [episodeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Rating {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  animeId   String
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  score     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([userId, animeId])
+}
+
+// --- System ---
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  title       String
+  message     String
+  type        String
+  readAt      DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  resource  String
+  ipAddress String
+  userAgent String?
+  details   Json?
+  createdAt DateTime @default(now())
+}
+
+model AdminLog {
+  id        String   @id @default(uuid())
+  adminId   String
+  admin     User     @relation("AdminActions", fields: [adminId], references: [id])
+  action    String
+  targetId  String?
+  details   Json?
+  ipAddress String
+  createdAt DateTime @default(now())
+}
+
+model AnimeView {
+  id        String   @id @default(uuid())
+  animeId   String
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model AnimeLike {
+  userId    String
+  animeId   String
+  anime     Anime    @relation(fields: [animeId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([userId, animeId])
+}
+
+model Banner {
+  id          String   @id @default(uuid())
+  title       String
+  imageUrl    String
+  linkUrl     String?
+  order       Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model HomepageSection {
+  id        String   @id @default(uuid())
+  title     String
+  type      String
+  order     Int      @default(0)
+  isActive  Boolean  @default(true)
+}
+
+model Announcement {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model SecurityEvent {
+  id        String   @id @default(uuid())
+  type      String
+  severity  String
+  details   Json?
+  ipAddress String
+  createdAt DateTime @default(now())
+}
