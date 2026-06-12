@@ -7,7 +7,15 @@
     "frontend"
   ],
   "scripts": {
+    "start": "npm run backend:dev & npm run frontend:dev",
     "backend:dev": "npm run start:dev --workspace=backend",
     "frontend:dev": "npm run dev --workspace=frontend"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^25.9.3",
+    "playwright": "^1.60.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
   }
 }

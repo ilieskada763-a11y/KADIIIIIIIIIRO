@@ -1,13 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-deep-black: #050505;
+  --color-anime-red: #FF1A1A;
+  --color-pistachio: #93C572;
+  --color-electric-blue: #00AEEF;
+}
 
 :root {
-  --anime-red: #FF1A1A;
-  --pistachio: #93C572;
-  --electric-blue: #00AEEF;
+  --background: #050505;
+  --foreground: #ffffff;
 }
 
 body {
-  background-color: #050505;
+  background-color: var(--color-deep-black);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.neon-glow-red {
+  box-shadow: 0 0 20px rgba(255, 26, 26, 0.4);
 }
