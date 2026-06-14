@@ -8,6 +8,8 @@ const nextConfig = {
       },
     ],
   },
+  // Optimizing for Vercel AI deployment
+  serverExternalPackages: ['sharp', 'onnxruntime-node'],
 };
 
 export default nextConfig;
