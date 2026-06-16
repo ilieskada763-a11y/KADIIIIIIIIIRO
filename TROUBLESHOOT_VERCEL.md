@@ -66,3 +66,14 @@ If you must use Serverless Functions (not Edge), increase the timeout in `page.t
 ```typescript
 export const maxDuration = 60; // Set to 60 seconds (Pro plan only)
 ```
+
+## 4. Mandatory Environment Variables
+
+For AKAI STREAM to function correctly on Vercel, ensure the following are set in **Project Settings**:
+
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string (Supabase/Neon) |
+| `JWT_SECRET` | Secret key for authentication |
+| `NEXT_PUBLIC_API_URL` | Points to `/api` or the full production URL |
+| `REDIS_URL` | (Optional) Redis connection for caching |

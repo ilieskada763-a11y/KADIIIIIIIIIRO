@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AKAI STREAM - Premium Next-Gen Anime Platform
 
-## Getting Started
+![AKAI STREAM](https://images.alphacoders.com/133/1338183.png)
 
-First, run the development server:
+AKAI STREAM is a futuristic, cinematic anime streaming platform built with Next.js 15 and NestJS. It features a Cyberpunk UI, interactive WebGL backgrounds, and advanced user features.
 
+## 🚀 Features
+
+- **Futuristic UI:** Deep black theme with neon accents, glassmorphism, and bento-grid layouts.
+- **Interactive Backgrounds:** Real-time WebGL particle systems using Three.js.
+- **Premium Video Player:** Custom player with Skip Intro, Auto-Next, and keyboard shortcuts.
+- **Advanced Search:** Voice search and instant filtering.
+- **Security:** JWT authentication, RBAC (Owner/Admin/User), and Audit Logging.
+- **Admin Dashboard:** High-end analytics and content management system.
+
+## 🛠 Tech Stack
+
+- **Frontend:** Next.js 15, TypeScript, Tailwind CSS, Framer Motion, GSAP, Three.js.
+- **Backend:** NestJS, Prisma, PostgreSQL, Redis.
+- **Deployment:** Vercel (Optimized for Edge Runtime).
+
+## 📦 Getting Started
+
+### Prerequisites
+- Node.js 20+
+- PostgreSQL instance
+- Redis instance (optional)
+
+### Installation
+1. Clone the repo: `git clone ...`
+2. Install dependencies: `npm install`
+3. Setup `.env` files in `frontend` and `backend`.
+
+### Running Locally
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+Frontend runs on `http://localhost:3000`, Backend on `http://localhost:3001`.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📜 Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Refer to `TROUBLESHOOT_VERCEL.md` for specific instructions on deploying to Vercel and configuring mandatory environment variables.
