@@ -12,10 +12,10 @@
     "frontend:dev": "npm run dev --workspace=frontend"
   },
   "devDependencies": {
-    "@playwright/test": "^1.60.0",
-    "@types/node": "^25.9.3",
-    "playwright": "^1.60.0",
+    "@playwright/test": "^1.49.1",
+    "@types/node": "^22.10.1",
+    "playwright": "^1.49.1",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^5.7.2"
   }
 }

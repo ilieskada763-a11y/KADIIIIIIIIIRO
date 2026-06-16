@@ -18,14 +18,15 @@ export class AuditLogMiddleware implements NestMiddleware {
         try {
           await this.prisma.auditLog.create({
             data: {
-              userId: user?.id,
-              action: `${method} ${originalUrl}`,
-              details: JSON.stringify({
-                ip,
-                userAgent,
+              userId: user?.id || null,
+              action: method,
+              resource: originalUrl,
+              ipAddress: ip || 'unknown',
+              userAgent,
+              details: {
                 statusCode,
                 body: method !== 'GET' ? req.body : undefined
-              }),
+              },
             },
           });
         } catch (e) {

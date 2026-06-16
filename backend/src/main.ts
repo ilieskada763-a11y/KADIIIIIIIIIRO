@@ -3,16 +3,26 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import serverless from 'serverless-http';
+import helmet from 'helmet';
 
 let cachedServer: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Security Middlewares
+  app.use(helmet());
   app.enableCors();
-  app.useGlobalPipes(new ValidationPipe());
+
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true,
+    forbidNonWhitelisted: true,
+  }));
 
   const config = new DocumentBuilder()
     .setTitle('AKAI STREAM API')
+    .setDescription('The core API for AKAI STREAM Premium Anime Platform')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -24,8 +34,6 @@ async function bootstrap() {
   return serverless(expressApp);
 }
 
-// Vercel prefers default export for functions sometimes, but handler is standard for AWS-style.
-// We provide both to be safe.
 const handler = async (event: any, context: any) => {
   if (!cachedServer) {
     cachedServer = await bootstrap();
@@ -36,12 +44,16 @@ const handler = async (event: any, context: any) => {
 export { handler };
 export default handler;
 
-// For local development
 if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   const startLocal = async () => {
     const app = await NestFactory.create(AppModule);
+    app.use(helmet());
     app.enableCors();
-    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalPipes(new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }));
     await app.listen(3001);
     console.log('Local server running on http://localhost:3001');
   };
